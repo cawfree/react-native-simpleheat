@@ -1,5 +1,5 @@
 # react-native-simpleheat
-The awesome simpleheat.js, bound in React Native.
+The awesome [simpleheat.js](https://github.com/mourner/simpleheat), bound to React Native.
 
 <p align="center">
   <img src="./bin/out.gif" alt="react-native-simpleheat" width="270" height="556">
