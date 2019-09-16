@@ -108,14 +108,7 @@ WebView|func||Yes
 pointerEvents|string|'box-only'|No
 containerStyle|shape[object Object]|styles.containerStyle|No
 max|number|10|No
-gradient|shape[object Object]|{
-  1.0: 'red',
-  0.4: 'blue',
-  0.6: 'cyan',
-  0.7: 'lime',
-  0.8: 'yellow',
-  1.0: 'red',
-}|No
+gradient|shape[object Object]|{ /* see code */ }|No
 onLoadEnd|func|e => null|No
 data|array|[]|No
 
