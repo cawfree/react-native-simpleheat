@@ -1,0 +1,22 @@
+{
+  "name": "react-native-simpleheat",
+  "version": "0.0.1",
+  "keywords": [
+    "heatmap",
+    "graph",
+    "react",
+    "react-native",
+    "simpleheat",
+    "heat",
+    "simple"
+  ],
+  "description": "The awesome simpleheat.js, bound in React Native.",
+  "main": "index.js",
+  "repository": "https://github.com/cawfree/react-native-simpleheat",
+  "author": "Alex Thomas (@cawfree) <hello@cawfree.com>",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "react-markdown-gen": "^0.0.11"
+  }
+}
