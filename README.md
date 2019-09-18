@@ -10,7 +10,7 @@ The awesome [simpleheat.js](https://github.com/mourner/simpleheat), bound to Rea
 Using [npm]():
 
 ```sh
-yarn add react-native-simpleheat
+npm install --save react-native-simpleheat
 ```
 
 Using [yarn]():
