@@ -93,6 +93,7 @@ export default class App extends React.Component {
           WebView={WebView} // <-- Implementors must define the <WebView/> component!
           data={data}
           gradient={gradient}
+          alpha={0.5} // <-- Control transparency for overlays!
         />
       </View>
     );
@@ -111,6 +112,8 @@ max|number|10|No
 gradient|shape[object Object]|{ /* see code */ }|No
 onLoadEnd|func|e => null|No
 data|array|[]|No
+minOpacity|number|0.05|No
+alpha|number|1.0|No
 
 ## ✌️ License
 [MIT](https://opensource.org/licenses/MIT)
