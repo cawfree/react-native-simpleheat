@@ -101,6 +101,35 @@ export default class App extends React.Component {
 }
 ```
 
+## 🌎 Maps
+
+If you specify a `region` prop to the `<Heatmap/>`, the points in your data prop will be treated as `latitude` and `longitude` coordinates. For  example, the configuration below would render intensity over Liverpool, UK.
+
+```javascript
+import React from 'react';
+import WebView from 'react-native-webview';
+import Heatmap from 'react-native-simpleheat';
+
+export default () => (
+  <Heatmap
+    WebView={WebView}
+    region={{
+      latitude: -3.0118499,
+      longitude: 53.4139281,
+      latitudeDelta: 1,
+      longitudeDelta: 1,
+    }}
+    data={[
+      [
+        53.4139281, // longitude
+        -3.0118499, // latitude
+        10, // intensity
+      ],
+    ]}
+  />
+);
+```
+
 ## 📌 Props
 
 Prop                  | Type     | Default                   | Required
@@ -114,6 +143,7 @@ onLoadEnd|func|e => null|No
 data|array|[]|No
 minOpacity|number|0.05|No
 alpha|number|1.0|No
+region|shape|null|No
 
 ## ✌️ License
 [MIT](https://opensource.org/licenses/MIT)

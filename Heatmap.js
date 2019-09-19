@@ -55,8 +55,9 @@ class Heatmap extends React.Component {
               1.0: 'red',
             },
 
-            data: function (data) {
+            data: function (data, region) {
               this._data = data;
+              this._region = region;
               return this;
             },
 
@@ -132,7 +133,25 @@ class Heatmap extends React.Component {
               for (var i = 0, len = this._data.length, p; i < len; i++) {
                 p = this._data[i];
                 ctx.globalAlpha = Math.min(Math.max((p[2] / this._max), minOpacity === undefined ? 0.05 : minOpacity), 1);
-                ctx.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
+
+                var x = p[0]; // longitude
+                var y = p[1]; // latitude
+                
+                // TODO: This an over-simplification.
+                if (this._region) {
+                  
+                  var minLng = this._region.longitude - (this._region.longitudeDelta * 0.5);
+                  var minLat = this._region.latitude - (this._region.latitudeDelta * 0.5);
+                  
+                  var xPx = this._width / this._region.longitudeDelta;
+                  var yPx = this._height / this._region.latitudeDelta;
+
+                  x = (x - minLng) * xPx;
+                  y = (y - minLat) * yPx;
+                  
+                }
+
+                ctx.drawImage(this._circle, x - this._r, y - this._r);
               }
 
               var colored = ctx.getImageData(0, 0, this._width, this._height);
@@ -186,13 +205,13 @@ class Heatmap extends React.Component {
   add = (x, y, value) => this.inject(
     `window.heat.add([${x}, ${y}, ${value}]);`,
   );
-  data = (data = []) => this.inject(
-    `window.heat.data(${JSON.stringify(data)});`,
+  data = (data = [], region = null) => this.inject(
+    `window.heat.data(${JSON.stringify(data)}, ${JSON.stringify(region)});`,
   );
   max = max => this.inject(
     `window.heat.max(${max});`,
   );
-  redraw = (minOpacity = 0.05, alpha = 1.0) => this.inject(
+  draw = (minOpacity = 0.05, alpha = 1.0) => this.inject(
     `window.requestAnimationFrame(() => window.heat.draw(${minOpacity}, ${alpha}));`,
   );
   gradient = gradient => this.inject(
@@ -206,11 +225,15 @@ class Heatmap extends React.Component {
       data,
       minOpacity,
       alpha,
+      region,
     } = this.props;
     this.gradient(gradient);
     this.max(max);
-    this.data(data);
-    this.redraw(
+    this.data(
+      data,
+      region,
+    );
+    this.draw(
       minOpacity,
       alpha,
     );
@@ -223,6 +246,7 @@ class Heatmap extends React.Component {
       max: prevMax,
       minOpacity: prevMinOpacity,
       alpha: prevAlpha,
+      region: prevRegion,
     } = prevProps;
     const {
       data,
@@ -230,14 +254,19 @@ class Heatmap extends React.Component {
       max,
       minOpacity,
       alpha,
+      region,
     } = this.props;
     const dataChanged = data !== prevData;
     const gradientChanged = gradient !== prevGradient;
     const maxChanged = max !== prevMax;
     const minOpacityChanged = minOpacity !== prevMinOpacity;
     const alphaChanged = alpha !== prevAlpha;
-    if (dataChanged) {
-      this.data(data);
+    const regionChanged = region !== prevRegion;
+    if (dataChanged || regionChanged) {
+      this.data(
+        data,
+        region,
+      );
     }
     if (gradientChanged) {
       this.gradient(gradient);
@@ -245,8 +274,8 @@ class Heatmap extends React.Component {
     if (maxChanged) {
       this.max(max);
     }
-    if (dataChanged || gradientChanged || maxChanged || minOpacityChanged || alphaChanged) {
-      this.redraw(
+    if (dataChanged || gradientChanged || maxChanged || minOpacityChanged || alphaChanged || regionChanged) {
+      this.draw(
         minOpacity,
         alpha,
       );
@@ -259,7 +288,6 @@ class Heatmap extends React.Component {
       WebView,
       containerStyle,
       pointerEvents,
-      max,
       onLoadEnd,
       ...extraProps
     } = this.props;
@@ -303,6 +331,7 @@ Heatmap.propTypes = {
   data: PropTypes.array,
   minOpacity: PropTypes.number,
   alpha: PropTypes.number,
+  region: PropTypes.shape({}),
 };
 
 Heatmap.defaultProps = {
@@ -321,6 +350,7 @@ Heatmap.defaultProps = {
   data: [],
   minOpacity: 0.05,
   alpha: 1.0,
+  region: null,
 };
 
 export default Heatmap;
