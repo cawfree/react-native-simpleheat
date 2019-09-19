@@ -139,16 +139,46 @@ class Heatmap extends React.Component {
                 
                 // TODO: This an over-simplification.
                 if (this._region) {
-                  
-                  var minLng = this._region.longitude - (this._region.longitudeDelta * 0.5);
-                  var minLat = this._region.latitude - (this._region.latitudeDelta * 0.5);
-                  
-                  var xPx = this._width / this._region.longitudeDelta;
-                  var yPx = this._height / this._region.latitudeDelta;
 
-                  x = (x - minLng) * xPx;
-                  y = (y - minLat) * yPx;
+                  // https://gist.github.com/cawfree/10e75712198d007e400592efdf1fbdca
+                  function spread(region, width, height) {
+                    return {
+                      latitudeDeltaDelta: region.latitudeDelta * 0.5,
+                      longitudeDeltaDelta: region.longitudeDelta * 0.5,
+                      latitudeRatio: height / region.latitudeDelta,
+                      longitudeRatio: width / region.longitudeDelta,
+                    };
+                  }
                   
+                  function geoToOrtho(region, width, height, latitude, longitude, spread) {
+                    return [
+                      (longitude - (region.longitude - spread.longitudeDeltaDelta)) * spread.longitudeRatio,
+                      height - ((latitude - (region.latitude - spread.latitudeDeltaDelta)) * spread.latitudeRatio),
+                    ];
+                  }
+                  
+                  function getTranslation(longitude, latitude, width, height, region) {
+                    return geoToOrtho(
+                      region,
+                      width,
+                      height,
+                      latitude,
+                      longitude,
+                      spread(region, width, height),
+                    );
+                  }
+
+                  var pts = getTranslation(
+                    x,
+                    y,
+                    this._width,
+                    this._height,
+                    this._region,
+                  );
+                  
+                  x = pts[0];
+                  y = pts[1];
+
                 }
 
                 ctx.drawImage(this._circle, x - this._r, y - this._r);
